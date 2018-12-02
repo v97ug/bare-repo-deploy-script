@@ -31,22 +31,27 @@
 <textarea rows="15" cols="140">
 #リモート
 git clone --bare --shared {{deploy}} {{myname}}.git
-cd {{myname}}.git/hooks/
 
 echo '# !/bin/bash
 cd {{deploy}}
 git --git-dir=.git pull {{myname}}.git master
-' > post-receive
+' > {{myname}}.git/hooks/post-receive
 
-chmod +x post-receive
+chmod +x {{myname}}.git/hooks/post-receive
 
 # ローカル
 git remote set-url --add origin {{sshName}}:{{myname}}.git
 </textarea>
 
 <h2>Permisson deniedな時は、.gitがあるディレクトリ自体の権限を追加する：</h2>
+
+<div>
+    <label for="permit-user">権限を追加するユーザー(例：sakura)</label>
+    <input id="permit-user" type="text" ng-model="permitUser" ng-init="permitUser='sakura'">
+</div>
+
 <textarea rows="2" cols="140">
-sudo chown -R sakura {{deploy}}
+sudo chown -R {{permitUser}} {{deploy}}
 </textarea>
 
 
