@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Xserverにデプロイを簡単にするスクリプト的なものを作る</title>
+
+</head>
+<body>
+<!--<div>-->
+<!--<label for="url">ドメイン名(例：~/ordermade-holdings.com)</label>-->
+<!--<input id="url" type="text" ng-model="url">-->
+<!--</div>-->
+
+<div>
+<label for="deploy">デプロイする場所(例：/usr/share/nginx/html/jc-block-app-server)</label>
+<input id="deploy" type="text" ng-model="deploy">
+</div>
+
+<div>
+    <label for="app-name">アプリ名(例：~/bare-repo/jc-block-app-server)</label>
+    <input id="app-name" type="text" ng-model="myname">
+</div>
+
+<div>
+    <label for="ssh-name">ssh先(例：sakura)</label>
+    <input id="ssh-name" type="text" ng-model="sshName" ng-init="sshName='sakura'">
+</div>
+
+<p>最初にローカルからgitファイルごとサーバにファイルを転送する</p>
+<h1>結果：</h1>
+<textarea rows="15" cols="140">
+#リモート
+git clone --bare --shared {{deploy}} {{myname}}.git
+cd {{myname}}.git/hooks/
+
+echo '# !/bin/bash
+cd {{deploy}}
+git --git-dir=.git pull {{myname}}.git master
+' > post-receive
+
+chmod +x post-receive
+
+# ローカル
+git remote set-url --add origin {{sshName}}:{{myname}}.git
+</textarea>
+
+<h2>Permisson deniedな時は、.gitがあるディレクトリ自体の権限を追加する：</h2>
+<textarea rows="2" cols="140">
+sudo chown -R sakura {{deploy}}
+</textarea>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+<script src="mainController.js"></script>
+</body>
+</html>
